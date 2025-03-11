@@ -5,7 +5,8 @@
 ## 📌 Стек технологий
 
 - **Язык программирования:** GoLang
-- **Фреймворк:** [Gin](https://github.com/gin-gonic/gin) (быстрый HTTP-фреймворк)
+- **Работа с HTTP** [net/http](https://pkg.go.dev/net/http) (стандартная библиотека для работы с http) 
+- **Роутер:** [Chi](https://go-chi.io/) (роутинг http-запросов)
 - **База данных:** PostgreSQL
 - **Взаимодействие с БД:** [PGX](https://github.com/jackc/pgx) (PostgreSQL driver and toolkit for Go)
 - **Миграции:** [golang-migrate](https://github.com/golang-migrate/migrate) (управление схемой БД)
