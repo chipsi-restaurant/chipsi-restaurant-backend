@@ -7,9 +7,9 @@ import (
 )
 
 type Application struct {
-	cfg *Config
-	db  *gorm.DB
-	log *slog.Logger
+	Cfg *Config
+	Db  *gorm.DB
+	Log *slog.Logger
 }
 
 func App() Application {
@@ -34,25 +34,30 @@ func App() Application {
 		log.Info("Postgres connected", "status", sqlDB.Stats())
 	}
 
-	app.cfg = cfg
-	app.log = log
-	app.db = db
+	app.Cfg = cfg
+	app.Log = log
+	app.Db = db
+
+	if err := Migrate(db); err != nil {
+		app.Log.Error("failed to migrate", "error", err)
+		os.Exit(1)
+	}
 
 	return *app
 }
 
 func (a Application) CloseDbConnection() {
-	sqlDB, err := a.db.DB()
+	sqlDB, err := a.Db.DB()
 	if err != nil {
-		a.log.Error("failed to get sql.DB from GORM", "error", err)
+		a.Log.Error("failed to get sql.DB from GORM", "error", err)
 		os.Exit(1)
 	}
 
 	defer func() {
 		if err := sqlDB.Close(); err != nil {
-			a.log.Error("failed to close db connection", "error", err)
+			a.Log.Error("failed to close db connection", "error", err)
 			os.Exit(1)
 		}
-		a.log.Info("db connection closed")
+		a.Log.Info("db connection closed")
 	}()
 }

@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"chipsiBackend/domain"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -31,4 +32,17 @@ func NewPsqlDB(cfg *Config) (*gorm.DB, error) {
 	}
 
 	return db, nil
+}
+
+func Migrate(db *gorm.DB) error {
+
+	if err := db.AutoMigrate(&domain.User{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&domain.Bonus{}); err != nil {
+		return err
+	}
+
+	return nil
 }
