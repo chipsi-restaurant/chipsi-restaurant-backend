@@ -3,20 +3,20 @@ FROM golang:1.23-alpine AS builder
 
 WORKDIR /app
 
-# Копируем все файлы проекта в контейнер
+# Копируем файлы проекта
 COPY . .
 
 # Загружаем зависимости
 RUN go mod download
 
-# Компиляция приложения
-RUN go build -o /app/main ./cmd
+# Компиляция Go-приложения
+RUN go build -o main ./cmd
 
 # Финальная стадия: запуск приложения
-FROM golang:1.23-alpine AS runner
+FROM alpine:latest AS runner
 
-# Копируем скомпилированное приложение и другие файлы
-COPY --from=builder /app /app
+# Копируем скомпилированное приложение
+COPY --from=builder /app/main /app/main
 
 WORKDIR /app
 
@@ -24,6 +24,6 @@ WORKDIR /app
 ENV CONFIG_PATH=./config/production.yaml
 
 # Ожидаем пока БД будет готова и выполняем миграции, затем запускаем приложение
-CMD ["sh", "/main"]
+CMD ["/app/main"]
 
 EXPOSE 8080
