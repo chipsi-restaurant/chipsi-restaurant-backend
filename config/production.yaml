@@ -5,7 +5,7 @@ server:
 database:
   user: postgres
   password: 123
-  host: localhost
+  host: chipsi-postgres
   port: 5432
   dbname: chipsi
   sslMode: false
