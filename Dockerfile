@@ -17,6 +17,7 @@ FROM alpine:latest AS runner
 
 # Копируем скомпилированное приложение
 COPY --from=builder /app/main /app/main
+COPY --from=builder /app/config /app/config
 
 WORKDIR /app
 
