@@ -74,3 +74,23 @@ func ExtractIDFromToken(requestToken string, secret string) (string, error) {
 
 	return claims["id"].(string), nil
 }
+
+func ExtractClaimsFromToken(requestToken string, secret string) (*domain.JwtCustomClaims, error) {
+	token, err := jwt.ParseWithClaims(requestToken, &domain.JwtCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*domain.JwtCustomClaims)
+	if !ok || !token.Valid {
+		return nil, fmt.Errorf("Invalid Token")
+	}
+
+	return claims, nil
+}
