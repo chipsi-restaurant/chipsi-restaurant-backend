@@ -5,13 +5,13 @@ import (
 )
 
 type JwtCustomClaims struct {
-	Email string `json:"Email"`
-	Phone string `json:"Phone"`
-	ID    uint   `json:"id"`
-	jwt.Claims
+	Email      string `json:"email"`
+	Phone      string `json:"phone"`
+	ID         uint   `json:"id"`
+	jwt.Claims `json:"claims"`
 }
 
 type JwtCustomRefreshClaims struct {
-	ID uint `json:"id"`
-	jwt.Claims
+	ID         uint `json:"id"`
+	jwt.Claims `json:"claims"`
 }
