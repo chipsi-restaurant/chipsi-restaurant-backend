@@ -19,6 +19,7 @@ func Setup(app bootstrap.Application) chi.Router {
 
 		r.Mount("/signup", NewSignupRouter(app.Db, app.Log, app.Cfg))
 		r.Mount("/login", NewLoginRouter(app.Db, app.Log, app.Cfg))
+		r.Mount("/refreshToken", NewRefreshTokenRouter(app.Db, app.Log, app.Cfg))
 
 		// Требуют токен
 		r.Group(func(r chi.Router) {
