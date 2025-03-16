@@ -1,3 +1,8 @@
+app:
+  jwt_secret_key: test-secret
+  access_token_expiry: 2h
+  refresh_token_expiry: 168h
+
 server:
   host: localhost
   port: 8080
