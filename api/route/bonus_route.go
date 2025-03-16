@@ -15,7 +15,7 @@ func NewBonusRouter(db *gorm.DB) chi.Router {
 	bc := controller.BonusController{
 		BonusUsecase: usecase.NewBonusUsecase(br, time.Second*5),
 	}
-	r.Post("/bonuses", bc.Create)
+	r.Post("/", bc.Create)
 
 	return r
 }

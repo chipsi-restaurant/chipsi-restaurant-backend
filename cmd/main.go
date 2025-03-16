@@ -12,8 +12,7 @@ import (
 func main() {
 	app := bootstrap.App()
 	defer app.CloseDbConnection()
-	router := route.Setup(app.Db)
-
+	router := route.Setup(app)
 	app.Log.Info(fmt.Sprintf("Server is listening on PORT: %d", app.Cfg.Server.Port))
 	addr := ":" + strconv.Itoa(app.Cfg.Server.Port)
 	err := http.ListenAndServe(addr, router)
