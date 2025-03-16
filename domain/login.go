@@ -1,11 +1,23 @@
 package domain
 
+import (
+	"context"
+	"time"
+)
+
 type LoginRequest struct {
-	Login    string
-	Password string
+	Login    string `json:"login"`
+	Password string `json:"password"`
 }
 
 type LoginResponse struct {
-	AccessToken  string
-	RefreshToken string
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}
+
+type LoginUsecase interface {
+	Login(c context.Context, request LoginRequest) (*LoginResponse, error)
+	GetUserByEmail(c context.Context, email string) (*User, error)
+	CreateAccessToken(user *User, secret string, expiry time.Duration) (accessToken string, err error)
+	CreateRefreshToken(user *User, secret string, expiry time.Duration) (refreshToken string, err error)
 }

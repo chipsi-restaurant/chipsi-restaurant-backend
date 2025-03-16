@@ -7,15 +7,15 @@ import (
 
 type SignupRequest struct {
 	FirstName string `json:"name"`
-	LastName  string `json:"last_name"`
+	LastName  string `json:"lastName"`
 	Phone     string `json:"phone"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
 
 type SignupResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
 }
 
 type SignupUsecase interface {

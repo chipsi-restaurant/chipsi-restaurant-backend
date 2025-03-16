@@ -9,18 +9,18 @@ type User struct {
 	ID                   uint                 `gorm:"primaryKey" json:"id"`
 	Phone                string               `gorm:"unique;not null" json:"phone"`
 	Email                string               `gorm:"unique;not null" json:"email"`
-	PasswordHash         string               `gorm:"not null" json:"password_hash"`
-	FirstName            string               `gorm:"not null" json:"first_name"`
-	LastName             string               `gorm:"not null" json:"last_name"`
-	CreatedAt            time.Time            `gorm:"autoCreateTime" json:"created_at"`
+	PasswordHash         string               `gorm:"not null" json:"passwordHash"`
+	FirstName            string               `gorm:"not null" json:"firstName"`
+	LastName             string               `gorm:"not null" json:"lastName"`
+	CreatedAt            time.Time            `gorm:"autoCreateTime" json:"createdAt"`
 	Orders               []Order              `gorm:"constraint:OnDelete:CASCADE;" json:"orders"`
 	Reservations         []Reservation        `gorm:"constraint:OnDelete:CASCADE;" json:"reservations"`
 	Events               []Event              `gorm:"constraint:OnDelete:CASCADE;" json:"events"`
-	SentCertificates     []GiftCertificate    `gorm:"foreignKey:SenderID" json:"sent_certificates"`
-	ReceivedCertificates []GiftCertificate    `gorm:"foreignKey:ReceiverID" json:"received_certificates"`
+	SentCertificates     []GiftCertificate    `gorm:"foreignKey:SenderID" json:"sentCertificates"`
+	ReceivedCertificates []GiftCertificate    `gorm:"foreignKey:ReceiverID" json:"receivedCertificates"`
 	Bonuses              Bonus                `gorm:"constraint:OnDelete:CASCADE;" json:"bonuses"`
 	Admin                Admin                `gorm:"constraint:OnDelete:CASCADE;" json:"admin"`
-	PasswordResetTokens  []PasswordResetToken `gorm:"constraint:OnDelete:CASCADE;" json:"password_reset_tokens"`
+	PasswordResetTokens  []PasswordResetToken `gorm:"constraint:OnDelete:CASCADE;" json:"passwordResetTokens"`
 }
 
 type UserRepository interface {
