@@ -3,6 +3,7 @@ package tokenutil
 import (
 	"chipsiBackend/domain"
 	"fmt"
+	"strconv"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v4"
@@ -72,7 +73,7 @@ func ExtractIDFromToken(requestToken string, secret string) (string, error) {
 		return "", fmt.Errorf("Invalid Token")
 	}
 
-	return claims["id"].(string), nil
+	return strconv.Itoa(int(claims["id"].(float64))), nil
 }
 
 func ExtractClaimsFromToken(requestToken string, secret string) (*domain.JwtCustomClaims, error) {

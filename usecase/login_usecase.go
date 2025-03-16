@@ -6,7 +6,6 @@ import (
 	"chipsiBackend/internal/tokenutil"
 	"chipsiBackend/pkg/httpErrors"
 	"context"
-	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -34,8 +33,6 @@ func (lu *loginUsecase) Login(ctx context.Context, request domain.LoginRequest) 
 	if bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(request.Password)) != nil {
 		return nil, httpErrors.Unauthorized
 	}
-
-	fmt.Println("cfg: ", lu.cfg)
 
 	accessToken, err := lu.CreateAccessToken(user, lu.cfg.App.JwtSecretKey, lu.cfg.App.AccessTokenExpires)
 
