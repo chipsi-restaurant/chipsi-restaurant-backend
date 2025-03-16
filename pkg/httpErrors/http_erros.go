@@ -3,6 +3,7 @@ package httpErrors
 import (
 	"errors"
 	"fmt"
+	"net/http"
 )
 
 var (
@@ -44,6 +45,32 @@ func NewRestError(status int, err string, causes interface{}) RestErr {
 	return RestError{
 		ErrStatus: status,
 		ErrError:  err,
+		ErrCauses: causes,
+	}
+}
+
+func NewInternalServerError(causes interface{}) RestErr {
+	result := RestError{
+		ErrStatus: http.StatusInternalServerError,
+		ErrError:  InternalServerError.Error(),
+		ErrCauses: causes,
+	}
+	return result
+}
+
+func NewBadRequestError(causes interface{}) RestErr {
+	result := RestError{
+		ErrStatus: http.StatusBadRequest,
+		ErrError:  BadRequest.Error(),
+		ErrCauses: causes,
+	}
+	return result
+}
+
+func NewUnauthorizedError(causes interface{}) RestErr {
+	return RestError{
+		ErrStatus: http.StatusUnauthorized,
+		ErrError:  Unauthorized.Error(),
 		ErrCauses: causes,
 	}
 }
