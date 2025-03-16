@@ -8,8 +8,8 @@ import (
 	jwt "github.com/golang-jwt/jwt/v4"
 )
 
-func CreateAccessToken(user *domain.User, secret string, expiry int) (accessToken string, err error) {
-	exp := time.Now().Add(time.Hour * time.Duration(expiry))
+func CreateAccessToken(user *domain.User, secret string, expiry time.Duration) (accessToken string, err error) {
+	exp := time.Now().Add(expiry)
 	claims := &domain.JwtCustomClaims{
 		Email: user.Email,
 		Phone: user.Phone,
@@ -26,11 +26,11 @@ func CreateAccessToken(user *domain.User, secret string, expiry int) (accessToke
 	return t, err
 }
 
-func CreateRefreshToken(user *domain.User, secret string, expiry int) (refreshToken string, err error) {
+func CreateRefreshToken(user *domain.User, secret string, expiry time.Duration) (refreshToken string, err error) {
 	claimsRefresh := &domain.JwtCustomRefreshClaims{
 		ID: user.ID,
 		Claims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(expiry))),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiry)),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsRefresh)
