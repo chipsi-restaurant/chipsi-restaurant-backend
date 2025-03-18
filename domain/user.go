@@ -1,21 +1,35 @@
 package domain
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type User struct {
-	ID                   uint                 `gorm:"primaryKey"`
-	Phone                string               `gorm:"unique;not null"`
-	Email                string               `gorm:"unique;not null"`
-	PasswordHash         string               `gorm:"not null"`
-	FirstName            string               `gorm:"not null"`
-	LastName             string               `gorm:"not null"`
-	CreatedAt            time.Time            `gorm:"autoCreateTime"`
-	Orders               []Order              `gorm:"constraint:OnDelete:CASCADE;"`
-	Reservations         []Reservation        `gorm:"constraint:OnDelete:CASCADE;"`
-	Events               []Event              `gorm:"constraint:OnDelete:CASCADE;"`
-	SentCertificates     []GiftCertificate    `gorm:"foreignKey:SenderID"`
-	ReceivedCertificates []GiftCertificate    `gorm:"foreignKey:ReceiverID"`
-	Bonuses              Bonus                `gorm:"constraint:OnDelete:CASCADE;"`
-	Admin                Admin                `gorm:"constraint:OnDelete:CASCADE;"`
-	PasswordResetTokens  []PasswordResetToken `gorm:"constraint:OnDelete:CASCADE;"`
+	ID                   uint                 `gorm:"primaryKey" json:"id"`
+	Phone                string               `gorm:"unique;not null" json:"phone"`
+	Email                string               `gorm:"unique;not null" json:"email"`
+	PasswordHash         string               `gorm:"not null" json:"passwordHash"`
+	FirstName            string               `gorm:"not null" json:"firstName"`
+	LastName             string               `gorm:"not null" json:"lastName"`
+	CreatedAt            time.Time            `gorm:"autoCreateTime" json:"createdAt"`
+	Orders               []Order              `gorm:"constraint:OnDelete:CASCADE;" json:"orders"`
+	Reservations         []Reservation        `gorm:"constraint:OnDelete:CASCADE;" json:"reservations"`
+	Events               []Event              `gorm:"constraint:OnDelete:CASCADE;" json:"events"`
+	SentCertificates     []GiftCertificate    `gorm:"foreignKey:SenderID" json:"sentCertificates"`
+	ReceivedCertificates []GiftCertificate    `gorm:"foreignKey:ReceiverID" json:"receivedCertificates"`
+	Bonuses              Bonus                `gorm:"constraint:OnDelete:CASCADE;" json:"bonuses"`
+	Admin                Admin                `gorm:"constraint:OnDelete:CASCADE;" json:"admin"`
+	PasswordResetTokens  []PasswordResetToken `gorm:"constraint:OnDelete:CASCADE;" json:"passwordResetTokens"`
+}
+
+type UserRepository interface {
+	Create(ctx context.Context, user *User) (*User, error)
+	GetByEmail(ctx context.Context, email string) (*User, error)
+	GetByID(ctx context.Context, id int64) (*User, error)
+}
+
+type UserUsecase interface {
+	Create(ctx context.Context, user *User) (*User, error)
+	GetByEmail(ctx context.Context, email string) (*User, error)
 }

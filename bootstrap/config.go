@@ -4,11 +4,19 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"os"
+	"time"
 )
 
 type Config struct {
+	App      AppConfig
 	Server   ServerConfig
 	Database DatabaseConfig
+}
+
+type AppConfig struct {
+	JwtSecretKey        string        `mapstructure:"jwt_secret_key"`
+	AccessTokenExpires  time.Duration `mapstructure:"access_token_expiry"`
+	RefreshTokenExpires time.Duration `mapstructure:"refresh_token_expiry"`
 }
 
 type ServerConfig struct {
