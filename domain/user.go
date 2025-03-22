@@ -23,6 +23,26 @@ type User struct {
 	PasswordResetTokens  []PasswordResetToken `gorm:"constraint:OnDelete:CASCADE;" json:"passwordResetTokens"`
 }
 
+type UserDTO struct {
+	ID        uint      `json:"id"`
+	Phone     string    `json:"phone"`
+	Email     string    `json:"email"`
+	FirstName string    `json:"firstName"`
+	LastName  string    `json:"lastName"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
+func ToUserDTO(user *User) *UserDTO {
+	return &UserDTO{
+		ID:        user.ID,
+		Phone:     user.Phone,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		CreatedAt: user.CreatedAt,
+	}
+}
+
 type UserRepository interface {
 	Create(ctx context.Context, user *User) (*User, error)
 	GetByEmail(ctx context.Context, email string) (*User, error)
