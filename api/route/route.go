@@ -1,7 +1,7 @@
 package route
 
 import (
-	jwtmiddleware "chipsiBackend/api/middleware"
+	custommiddleware "chipsiBackend/api/middleware"
 	"chipsiBackend/bootstrap"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -17,14 +17,15 @@ func Setup(app bootstrap.Application) chi.Router {
 	apiRouter := func(r chi.Router) {
 		r.Get("/health", healthCheck)
 
-		r.Mount("/signup", NewSignupRouter(app.Db, app.Log, app.Cfg))
-		r.Mount("/login", NewLoginRouter(app.Db, app.Log, app.Cfg))
-		r.Mount("/refreshToken", NewRefreshTokenRouter(app.Db, app.Log, app.Cfg))
+		r.Mount("/auth/signup", NewSignupRouter(app.Db, app.Log, app.Cfg))
+		r.Mount("/auth/login", NewLoginRouter(app.Db, app.Log, app.Cfg))
+		r.Mount("/auth/refreshToken", NewRefreshTokenRouter(app.Db, app.Log, app.Cfg))
 
 		// Требуют токен
 		r.Group(func(r chi.Router) {
-			r.Use(jwtmiddleware.JwtAuth(app.Cfg.App.JwtSecretKey))
+			r.Use(custommiddleware.JwtAuth(app.Cfg.App.JwtSecretKey))
 			r.Mount("/bonuses", NewBonusRouter(app.Db))
+			r.Mount("/users", NewUserRouter(app.Db, app.Log, app.Cfg))
 		})
 	}
 
