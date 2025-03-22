@@ -74,3 +74,11 @@ func NewUnauthorizedError(causes interface{}) RestErr {
 		ErrCauses: causes,
 	}
 }
+
+func NewNotFoundError(causes interface{}) RestErr {
+	return RestError{
+		ErrStatus: http.StatusNotFound,
+		ErrError:  NotFound.Error(),
+		ErrCauses: causes,
+	}
+}
