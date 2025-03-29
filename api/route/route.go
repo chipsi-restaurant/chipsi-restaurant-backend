@@ -3,9 +3,11 @@ package route
 import (
 	custommiddleware "chipsiBackend/api/middleware"
 	"chipsiBackend/bootstrap"
+	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"net/http"
+	"time"
 )
 
 func Setup(app bootstrap.Application) chi.Router {
@@ -34,11 +36,15 @@ func Setup(app bootstrap.Application) chi.Router {
 	return r
 }
 
-func healthCheck(writer http.ResponseWriter, request *http.Request) {
-	_, err := writer.Write([]byte("OK"))
-	if err != nil {
-		writer.WriteHeader(http.StatusInternalServerError)
-		return
+func healthCheck(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	resp := map[string]interface{}{
+		"status":    "ok",
+		"service":   "chipsiBackend",
+		"timestamp": time.Now().UTC().Format(time.RFC3339),
 	}
-	writer.WriteHeader(http.StatusOK)
+
+	_ = json.NewEncoder(w).Encode(resp)
 }
