@@ -2,7 +2,9 @@ package bootstrap
 
 import (
 	"chipsiBackend/domain"
+	"errors"
 	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -41,6 +43,66 @@ func Migrate(db *gorm.DB) error {
 	}
 
 	if err := db.AutoMigrate(&domain.Bonus{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&domain.Category{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&domain.MenuItem{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&domain.Admin{}); err != nil {
+		return err
+	}
+
+	if err := createAdmin(db); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func createAdmin(db *gorm.DB) error {
+	const email = "admin@mail.com"
+
+	var existing domain.User
+	err := db.Where("email = ?", email).First(&existing).Error
+	if err == nil {
+		// Пользователь уже существует — ничего не делаем
+		return nil
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		// Какая-то другая ошибка при запросе
+		return err
+	}
+
+	// Создаём нового пользователя
+	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	user := domain.User{
+		Email:        email,
+		Phone:        "11111111111",
+		FirstName:    "Admin",
+		LastName:     "Admin",
+		PasswordHash: string(encryptedPassword),
+	}
+
+	if err := db.Create(&user).Error; err != nil {
+		return err
+	}
+
+	admin := domain.Admin{
+		UserID: user.ID,
+		Role:   domain.AdminRoleAdmin,
+	}
+
+	if err := db.Create(&admin).Error; err != nil {
 		return err
 	}
 
