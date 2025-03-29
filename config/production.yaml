@@ -14,3 +14,10 @@ database:
   port: 5432
   dbname: chipsi
   sslMode: false
+
+s3:
+  endpoint: s3.cloud.ru
+  bucket: chipsi-restaurant
+  region: ru-central-1
+  access_key: token
+  secret_key: token
