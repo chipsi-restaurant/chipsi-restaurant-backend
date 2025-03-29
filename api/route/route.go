@@ -3,6 +3,8 @@ package route
 import (
 	custommiddleware "chipsiBackend/api/middleware"
 	"chipsiBackend/bootstrap"
+	"chipsiBackend/repository"
+	"chipsiBackend/usecase"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -13,8 +15,11 @@ import (
 func Setup(app bootstrap.Application) chi.Router {
 	r := chi.NewRouter()
 
+	adminMiddleware := custommiddleware.IsAdmin(usecase.NewUserUsecase(repository.NewUserRepository(app.Db), time.Second*5))
+
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(custommiddleware.SetJSONContentType)
 
 	apiRouter := func(r chi.Router) {
 		r.Get("/health", healthCheck)
@@ -27,6 +32,7 @@ func Setup(app bootstrap.Application) chi.Router {
 		r.Group(func(r chi.Router) {
 			r.Use(custommiddleware.JwtAuth(app.Cfg.App.JwtSecretKey))
 			r.Mount("/bonuses", NewBonusRouter(app.Db))
+			r.Mount("/categories", NewCategoryRouter(app.Db, adminMiddleware))
 			r.Mount("/users", NewUserRouter(app.Db, app.Log, app.Cfg))
 		})
 	}
