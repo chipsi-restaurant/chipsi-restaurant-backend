@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	return
 	app := bootstrap.App()
 	defer app.CloseDbConnection()
 	router := route.Setup(app)
