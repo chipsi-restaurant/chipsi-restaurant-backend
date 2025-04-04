@@ -23,6 +23,7 @@ func NewCategoryRouter(db *gorm.DB, handler func(http.Handler) http.Handler) chi
 	r.Get("/", cc.GetAll)
 	r.Get("/{id}", cc.GetByID)
 	r.With(handler).Post("/", cc.Create)
+	r.With(handler).Delete("/{id}", cc.Delete)
 
 	return r
 

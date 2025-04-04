@@ -33,7 +33,7 @@ func (cc *CategoryController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 }
 
 func (cc *CategoryController) GetByID(w http.ResponseWriter, r *http.Request) {
@@ -81,4 +81,25 @@ func (cc *CategoryController) GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+}
+
+func (cc *CategoryController) Delete(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	if idStr == "" {
+		http.Error(w, `{"error": "id must be not null"}`, http.StatusBadRequest)
+		return
+	}
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, `{"error": "id must be number"}`, http.StatusBadRequest)
+		return
+	}
+
+	err = cc.CategoryUsecase.Delete(r.Context(), id)
+	if err != nil {
+		http.Error(w, `{"error": "not found"}`, http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
