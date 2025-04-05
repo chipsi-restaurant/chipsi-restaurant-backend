@@ -17,9 +17,9 @@ func Setup(app bootstrap.Application) chi.Router {
 
 	adminMiddleware := custommiddleware.IsAdmin(usecase.NewUserUsecase(repository.NewUserRepository(app.Db), time.Second*5))
 
+	r.Use(custommiddleware.SetJSONContentType)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(custommiddleware.SetJSONContentType)
 
 	apiRouter := func(r chi.Router) {
 		r.Get("/health", healthCheck)
@@ -33,6 +33,7 @@ func Setup(app bootstrap.Application) chi.Router {
 			r.Use(custommiddleware.JwtAuth(app.Cfg.App.JwtSecretKey))
 			r.Mount("/bonuses", NewBonusRouter(app.Db))
 			r.Mount("/categories", NewCategoryRouter(app.Db, adminMiddleware))
+			r.Mount("/menuItems", NewMenuItemRouter(app.S3, app.Db, app.Cfg, adminMiddleware))
 			r.Mount("/users", NewUserRouter(app.Db, app.Log, app.Cfg))
 		})
 	}
