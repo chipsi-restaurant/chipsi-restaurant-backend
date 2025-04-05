@@ -2,10 +2,12 @@ package controller
 
 import (
 	"chipsiBackend/domain"
+	"chipsiBackend/pkg/httpErrors"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type CategoryController struct {
@@ -97,8 +99,17 @@ func (cc *CategoryController) Delete(w http.ResponseWriter, r *http.Request) {
 
 	err = cc.CategoryUsecase.Delete(r.Context(), id)
 	if err != nil {
-		http.Error(w, `{"error": "not found"}`, http.StatusNotFound)
-		return
+		switch {
+		case strings.Contains(err.Error(), "SQLSTATE 23503"):
+			httpErrors.JSONError(w, "can't delete: item has dependencies", http.StatusConflict)
+			return
+		case strings.Contains(err.Error(), "record not found"):
+			httpErrors.JSONError(w, "category not found", http.StatusNotFound)
+			return
+		default:
+			httpErrors.JSONError(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusNoContent)
