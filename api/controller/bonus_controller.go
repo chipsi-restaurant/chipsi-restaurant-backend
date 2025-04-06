@@ -21,7 +21,6 @@ func (bc *BonusController) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error": "`+err.Error()+`"}`, http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(bonus)
 	if err != nil {
 		http.Error(w, `{"error": "`+err.Error()+`"}`, http.StatusInternalServerError)

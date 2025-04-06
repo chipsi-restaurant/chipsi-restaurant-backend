@@ -19,8 +19,6 @@ type LoginController struct {
 func (lc *LoginController) Login(w http.ResponseWriter, r *http.Request) {
 	request := domain.LoginRequest{}
 
-	w.Header().Set("Content-Type", "application/json")
-
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, `{"error": "`+err.Error()+`"}`, http.StatusBadRequest)
 	}

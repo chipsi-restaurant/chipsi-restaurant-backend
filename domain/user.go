@@ -19,7 +19,7 @@ type User struct {
 	SentCertificates     []GiftCertificate    `gorm:"foreignKey:SenderID" json:"sentCertificates"`
 	ReceivedCertificates []GiftCertificate    `gorm:"foreignKey:ReceiverID" json:"receivedCertificates"`
 	Bonuses              Bonus                `gorm:"constraint:OnDelete:CASCADE;" json:"bonuses"`
-	Admin                Admin                `gorm:"constraint:OnDelete:CASCADE;" json:"admin"`
+	Admin                []Admin              `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE;" json:"admin"`
 	PasswordResetTokens  []PasswordResetToken `gorm:"constraint:OnDelete:CASCADE;" json:"passwordResetTokens"`
 }
 
@@ -52,4 +52,5 @@ type UserRepository interface {
 type UserUsecase interface {
 	Create(ctx context.Context, user *User) (*User, error)
 	GetByEmail(ctx context.Context, email string) (*User, error)
+	GetByID(ctx context.Context, id int64) (*User, error)
 }

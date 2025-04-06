@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 	"log/slog"
 	"os"
@@ -10,6 +11,7 @@ type Application struct {
 	Cfg *Config
 	Db  *gorm.DB
 	Log *slog.Logger
+	S3  *minio.Client
 }
 
 func App() Application {
@@ -34,9 +36,17 @@ func App() Application {
 		log.Info("Postgres connected", "status", sqlDB.Stats())
 	}
 
+	s3, err := NewS3Client(cfg)
+
+	if err != nil {
+		log.Error("failed to connect to S3", "error", err)
+		os.Exit(1)
+	}
+
 	app.Cfg = cfg
 	app.Log = log
 	app.Db = db
+	app.S3 = s3
 
 	if err := Migrate(db); err != nil {
 		app.Log.Error("failed to migrate", "error", err)

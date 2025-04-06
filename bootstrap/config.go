@@ -11,6 +11,7 @@ type Config struct {
 	App      AppConfig
 	Server   ServerConfig
 	Database DatabaseConfig
+	S3       S3Config
 }
 
 type AppConfig struct {
@@ -31,6 +32,14 @@ type DatabaseConfig struct {
 	Port     int
 	DBName   string
 	SslMode  bool
+}
+
+type S3Config struct {
+	Endpoint  string `mapstructure:"endpoint"`
+	Bucket    string `mapstructure:"bucket"`
+	Region    string `mapstructure:"region"`
+	AccessKey string `mapstructure:"access_key"`
+	SecretKey string `mapstructure:"secret_key"`
 }
 
 func LoadConfig() (*Config, error) {

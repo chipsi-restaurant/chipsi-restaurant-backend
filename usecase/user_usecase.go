@@ -29,3 +29,9 @@ func (b userUsecase) GetByEmail(ctx context.Context, email string) (*domain.User
 	defer cancel()
 	return b.userRepository.GetByEmail(ctx, email)
 }
+
+func (b userUsecase) GetByID(ctx context.Context, id int64) (*domain.User, error) {
+	ctx, cancel := context.WithTimeout(ctx, b.contextTimeout)
+	defer cancel()
+	return b.userRepository.GetByID(ctx, id)
+}
