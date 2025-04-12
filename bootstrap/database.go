@@ -58,6 +58,10 @@ func Migrate(db *gorm.DB) error {
 		return err
 	}
 
+	if err := db.AutoMigrate(&domain.GiftCertificate{}); err != nil {
+		return err
+	}
+
 	if err := createAdmin(db); err != nil {
 		return err
 	}
