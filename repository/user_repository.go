@@ -49,3 +49,7 @@ func (r *userRepository) GetByID(ctx context.Context, id int64) (*domain.User, e
 	}
 	return &user, nil
 }
+
+func (r *userRepository) UpdateFields(ctx context.Context, id int64, fields map[string]interface{}) error {
+	return r.db.WithContext(ctx).Model(&domain.User{}).Where("id = ?", id).Updates(fields).Error
+}

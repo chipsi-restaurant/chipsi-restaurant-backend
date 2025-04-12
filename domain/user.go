@@ -45,6 +45,7 @@ func ToUserDTO(user *User) *UserDTO {
 
 type UserRepository interface {
 	Create(ctx context.Context, user *User) (*User, error)
+	UpdateFields(ctx context.Context, id int64, fields map[string]interface{}) error
 	GetByEmail(ctx context.Context, email string) (*User, error)
 	GetByID(ctx context.Context, id int64) (*User, error)
 }
@@ -53,4 +54,5 @@ type UserUsecase interface {
 	Create(ctx context.Context, user *User) (*User, error)
 	GetByEmail(ctx context.Context, email string) (*User, error)
 	GetByID(ctx context.Context, id int64) (*User, error)
+	Patch(ctx context.Context, id int64, fields map[string]interface{}) (*User, error)
 }
