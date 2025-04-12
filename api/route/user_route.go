@@ -2,13 +2,12 @@ package route
 
 import (
 	"chipsiBackend/api/controller"
-	"chipsiBackend/bootstrap"
 	"chipsiBackend/domain"
 	"github.com/go-chi/chi/v5"
 	"log/slog"
 )
 
-func NewUserRouter(userUsecase domain.UserUsecase, log *slog.Logger, cfg *bootstrap.Config) chi.Router {
+func NewUserRouter(userUsecase domain.UserUsecase, log *slog.Logger) chi.Router {
 	r := chi.NewRouter()
 	uc := controller.UserController{
 		UserUsecase: userUsecase,

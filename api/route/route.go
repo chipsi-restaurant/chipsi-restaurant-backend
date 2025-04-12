@@ -36,7 +36,7 @@ func Setup(app bootstrap.Application) chi.Router {
 			r.Mount("/categories", NewCategoryRouter(graph.UCs.Category, adminMiddleware))
 			r.Mount("/menuItems", NewMenuItemRouter(graph.UCs.MenuItem, adminMiddleware))
 			r.Mount("/giftCertificates", NewGiftCertificateRouter(graph.UCs.GiftCertificate))
-			r.Mount("/users", NewUserRouter(graph.UCs.User, app.Log, app.Cfg))
+			r.Mount("/users", NewUserRouter(graph.UCs.User, app.Log))
 		})
 	}
 
