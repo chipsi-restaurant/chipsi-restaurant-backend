@@ -76,7 +76,7 @@ func (g giftCertificateUsecase) GetBySenderID(ctx context.Context, id int64) ([]
 	if err != nil {
 		return nil, err
 	}
-	response := make([]*domain.GiftCertificateResponse, len(certificates))
+	response := make([]*domain.GiftCertificateResponse, 0, len(certificates))
 	for _, certificate := range certificates {
 		response = append(response, &domain.GiftCertificateResponse{
 			Amount:        certificate.Amount,

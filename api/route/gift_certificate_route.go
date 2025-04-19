@@ -12,6 +12,7 @@ func NewGiftCertificateRouter(giftCertificateUsecase domain.GiftCertificateUseca
 		GiftCertificateUsecase: giftCertificateUsecase,
 	}
 
+	r.Get("/mine", gc.GetMine)
 	r.Post("/", gc.Create)
 
 	return r

@@ -49,3 +49,29 @@ func (c *GiftCertificateController) Create(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 
 }
+
+func (c *GiftCertificateController) GetMine(w http.ResponseWriter, r *http.Request) {
+	userIDStr, ok := r.Context().Value(middleware.UserIDKey).(string)
+	if !ok {
+		httpErrors.JSONError(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	id, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		httpErrors.JSONError(w, "can't parse userId", http.StatusInternalServerError)
+		return
+	}
+
+	certificates, err := c.GiftCertificateUsecase.GetBySenderID(r.Context(), id)
+	if err != nil {
+		httpErrors.JSONError(w, "failed to fetch certificates", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(certificates); err != nil {
+		httpErrors.JSONError(w, "can't encode response", http.StatusInternalServerError)
+		return
+	}
+}
