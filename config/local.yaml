@@ -19,9 +19,13 @@ s3:
   endpoint: s3.cloud.ru
   bucket: chipsi-restaurant
   region: ru-central-1
-  access_key: token
-  secret_key: token
+  access_key:
+  secret_key:
 
 
-
-
+smtp:
+  from: roflandown@yandex.ru
+  host: smtp.yandex.ru
+  port: 465
+  username: roflandown@yandex.ru
+  password:

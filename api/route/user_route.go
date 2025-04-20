@@ -2,24 +2,21 @@ package route
 
 import (
 	"chipsiBackend/api/controller"
-	"chipsiBackend/bootstrap"
-	"chipsiBackend/repository"
-	"chipsiBackend/usecase"
+	"chipsiBackend/domain"
 	"github.com/go-chi/chi/v5"
-	"gorm.io/gorm"
 	"log/slog"
-	"time"
 )
 
-func NewUserRouter(db *gorm.DB, log *slog.Logger, cfg *bootstrap.Config) chi.Router {
+func NewUserRouter(userUsecase domain.UserUsecase, log *slog.Logger) chi.Router {
 	r := chi.NewRouter()
-	ur := repository.NewUserRepository(db)
 	uc := controller.UserController{
-		UserUsecase: usecase.NewUserUsecase(ur, 5*time.Second),
+		UserUsecase: userUsecase,
 		Log:         log,
 	}
 
 	r.Get("/", uc.GetUserByEmail)
+	r.Get("/me", uc.GetMe)
+	r.Patch("/me", uc.PatchMe)
 
 	return r
 }

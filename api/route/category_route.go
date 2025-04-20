@@ -2,23 +2,16 @@ package route
 
 import (
 	"chipsiBackend/api/controller"
-	"chipsiBackend/repository"
-	"chipsiBackend/usecase"
+	"chipsiBackend/domain"
 	"github.com/go-chi/chi/v5"
-	"gorm.io/gorm"
 	"net/http"
-	"time"
 )
 
-func NewCategoryRouter(db *gorm.DB, handler func(http.Handler) http.Handler) chi.Router {
+func NewCategoryRouter(categoryUsecase domain.CategoryUsecase, handler func(http.Handler) http.Handler) chi.Router {
 	r := chi.NewRouter()
 
-	cr := repository.NewCategoryRepository(db)
-
-	cu := usecase.NewCategoryUsecase(cr, 5*time.Second)
-
 	cc := controller.CategoryController{
-		CategoryUsecase: cu,
+		CategoryUsecase: categoryUsecase,
 	}
 	r.Get("/", cc.GetAll)
 	r.Get("/{id}", cc.GetByID)

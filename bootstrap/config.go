@@ -12,6 +12,7 @@ type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
 	S3       S3Config
+	Smtp     SmtpConfig
 }
 
 type AppConfig struct {
@@ -40,6 +41,14 @@ type S3Config struct {
 	Region    string `mapstructure:"region"`
 	AccessKey string `mapstructure:"access_key"`
 	SecretKey string `mapstructure:"secret_key"`
+}
+
+type SmtpConfig struct {
+	From     string
+	Host     string
+	Port     int
+	Username string
+	Password string
 }
 
 func LoadConfig() (*Config, error) {

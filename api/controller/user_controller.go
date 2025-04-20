@@ -1,11 +1,14 @@
 package controller
 
 import (
+	"chipsiBackend/api/middleware"
 	"chipsiBackend/domain"
 	"chipsiBackend/pkg/httpErrors"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
+	"strconv"
 )
 
 type UserController struct {
@@ -39,4 +42,67 @@ func (uc *UserController) GetUserByEmail(w http.ResponseWriter, r *http.Request)
 	}
 	w.WriteHeader(http.StatusOK)
 	return
+}
+
+func (uc *UserController) GetMe(w http.ResponseWriter, r *http.Request) {
+	userId := r.Context().Value(middleware.UserIDKey).(string)
+	id, err := strconv.ParseInt(userId, 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		if err := json.NewEncoder(w).Encode(httpErrors.NewInternalServerError(err)); err != nil {
+			uc.Log.Error("can't encode json")
+		}
+		return
+	}
+
+	user, err := uc.UserUsecase.GetByID(r.Context(), id)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		if encodeError := json.NewEncoder(w).Encode(httpErrors.NewNotFoundError(err)); encodeError != nil {
+			uc.Log.Error("can't encode json")
+		}
+		return
+	}
+	userDTO := domain.ToUserDTO(user)
+	if err := json.NewEncoder(w).Encode(userDTO); err != nil {
+		uc.Log.Error("can't encode json")
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
+func (uc *UserController) PatchMe(w http.ResponseWriter, r *http.Request) {
+	userId := r.Context().Value(middleware.UserIDKey).(string)
+	id, err := strconv.ParseInt(userId, 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		if err := json.NewEncoder(w).Encode(httpErrors.NewInternalServerError(err)); err != nil {
+			uc.Log.Error("can't encode json")
+		}
+		return
+	}
+
+	var body map[string]interface{}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		httpErrors.JSONError(w, "invalid json", http.StatusBadRequest)
+		return
+	}
+
+	user, err := uc.UserUsecase.Patch(r.Context(), id, body)
+	if err != nil {
+		if errors.Is(err, httpErrors.BadRequest) {
+			httpErrors.JSONError(w, "invalid json", http.StatusBadRequest)
+			return
+
+		}
+		httpErrors.JSONError(w, err.Error(), http.StatusInternalServerError)
+		return
+
+	}
+
+	userDTO := domain.ToUserDTO(user)
+	if err := json.NewEncoder(w).Encode(userDTO); err != nil {
+		uc.Log.Error("can't encode json")
+	}
+	w.WriteHeader(http.StatusOK)
 }

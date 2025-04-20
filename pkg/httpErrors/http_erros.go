@@ -15,6 +15,7 @@ var (
 	NotFound            = errors.New("Not Found")
 	InternalServerError = errors.New("Internal Server Error")
 	ExistsEmailError    = errors.New("User with given email already exists")
+	EmailNotExistsError = errors.New("User with given email doesn't exists")
 )
 
 type RestErr interface {

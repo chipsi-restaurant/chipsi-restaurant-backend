@@ -3,8 +3,7 @@ package route
 import (
 	custommiddleware "chipsiBackend/api/middleware"
 	"chipsiBackend/bootstrap"
-	"chipsiBackend/repository"
-	"chipsiBackend/usecase"
+	"chipsiBackend/setup"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -15,7 +14,9 @@ import (
 func Setup(app bootstrap.Application) chi.Router {
 	r := chi.NewRouter()
 
-	adminMiddleware := custommiddleware.IsAdmin(usecase.NewUserUsecase(repository.NewUserRepository(app.Db), time.Second*5))
+	graph := setup.BuildGraph(app)
+
+	adminMiddleware := custommiddleware.IsAdmin(graph.UCs.User)
 
 	r.Use(custommiddleware.SetJSONContentType)
 	r.Use(middleware.Logger)
@@ -24,17 +25,19 @@ func Setup(app bootstrap.Application) chi.Router {
 	apiRouter := func(r chi.Router) {
 		r.Get("/health", healthCheck)
 
-		r.Mount("/auth/signup", NewSignupRouter(app.Db, app.Log, app.Cfg))
-		r.Mount("/auth/login", NewLoginRouter(app.Db, app.Log, app.Cfg))
-		r.Mount("/auth/refreshToken", NewRefreshTokenRouter(app.Db, app.Log, app.Cfg))
+		r.Mount("/auth/signup", NewSignupRouter(graph.UCs.Signup, app.Log, app.Cfg))
+		r.Mount("/auth/login", NewLoginRouter(graph.UCs.Login, app.Log, app.Cfg))
+		r.Mount("/auth/refreshToken", NewRefreshTokenRouter(graph.UCs.RefreshToken, app.Log, app.Cfg))
 
 		// Требуют токен
 		r.Group(func(r chi.Router) {
 			r.Use(custommiddleware.JwtAuth(app.Cfg.App.JwtSecretKey))
-			r.Mount("/bonuses", NewBonusRouter(app.Db))
-			r.Mount("/categories", NewCategoryRouter(app.Db, adminMiddleware))
-			r.Mount("/menuItems", NewMenuItemRouter(app.S3, app.Db, app.Cfg, adminMiddleware))
-			r.Mount("/users", NewUserRouter(app.Db, app.Log, app.Cfg))
+			r.Mount("/bonuses", NewBonusRouter(graph.UCs.Bonus))
+			r.Mount("/categories", NewCategoryRouter(graph.UCs.Category, adminMiddleware))
+			r.Mount("/menuItems", NewMenuItemRouter(graph.UCs.MenuItem, adminMiddleware))
+			r.Mount("/giftCertificates", NewGiftCertificateRouter(graph.UCs.GiftCertificate))
+			r.Mount("/users", NewUserRouter(graph.UCs.User, app.Log))
+			r.Mount("/orders", NewOrderRouter(graph.UCs.Order))
 		})
 	}
 

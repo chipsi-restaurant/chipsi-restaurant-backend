@@ -2,27 +2,13 @@ package route
 
 import (
 	"chipsiBackend/api/controller"
-	"chipsiBackend/bootstrap"
-	"chipsiBackend/repository"
-	"chipsiBackend/usecase"
+	"chipsiBackend/domain"
 	"github.com/go-chi/chi/v5"
-	"github.com/minio/minio-go/v7"
-	"gorm.io/gorm"
 	"net/http"
-	"time"
 )
 
-func NewMenuItemRouter(client *minio.Client, db *gorm.DB,
-	cfg *bootstrap.Config, handler func(http.Handler) http.Handler) chi.Router {
-
+func NewMenuItemRouter(menuItemUsecase domain.MenuItemUsecase, handler func(http.Handler) http.Handler) chi.Router {
 	r := chi.NewRouter()
-
-	s3Usecase := usecase.NewS3Usecase(client, cfg)
-	categoryRepository := repository.NewCategoryRepository(db)
-	categoryUsecase := usecase.NewCategoryUsecase(categoryRepository, time.Second*10)
-
-	menuItemRepository := repository.NewMenuItemRepository(db)
-	menuItemUsecase := usecase.NewMenuItemUsecase(s3Usecase, categoryUsecase, menuItemRepository, time.Second*10)
 
 	mc := controller.MenuItemController{MenuItemUsecase: menuItemUsecase}
 

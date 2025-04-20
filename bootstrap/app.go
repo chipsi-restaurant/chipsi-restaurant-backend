@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"chipsiBackend/internal/mailer"
 	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 	"log/slog"
@@ -8,10 +9,11 @@ import (
 )
 
 type Application struct {
-	Cfg *Config
-	Db  *gorm.DB
-	Log *slog.Logger
-	S3  *minio.Client
+	Cfg  *Config
+	Db   *gorm.DB
+	Log  *slog.Logger
+	S3   *minio.Client
+	Mail *mailer.GomailMailer
 }
 
 func App() Application {
@@ -43,10 +45,19 @@ func App() Application {
 		os.Exit(1)
 	}
 
+	gomailMailer := mailer.NewGomailMailer(
+		cfg.Smtp.From,
+		cfg.Smtp.Host,
+		cfg.Smtp.Port,
+		cfg.Smtp.Username,
+		cfg.Smtp.Password,
+	)
+
 	app.Cfg = cfg
 	app.Log = log
 	app.Db = db
 	app.S3 = s3
+	app.Mail = gomailMailer
 
 	if err := Migrate(db); err != nil {
 		app.Log.Error("failed to migrate", "error", err)
