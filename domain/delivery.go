@@ -10,3 +10,12 @@ type Delivery struct {
 	Notes           string
 	Status          DeliveryStatus `gorm:"default:'pending'"`
 }
+
+type DeliveryResponse struct {
+	Address         string `json:"address"`
+	Floor           int    `json:"floor"`
+	ApartmentNumber int    `json:"apartmentNumber"`
+	IntercomCode    string `json:"intercomCode"`
+	Notes           string `json:"notes"`
+	Status          string `json:"status"`
+}
