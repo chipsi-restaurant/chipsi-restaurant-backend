@@ -65,7 +65,6 @@ func (r *giftCertificateRepository) UseCertificate(ctx context.Context, code str
 		Where("code = ? AND status = ?", code, domain.CertificateActive).
 		Updates(map[string]interface{}{
 			"status": domain.CertificateUsed,
-			"amount": 0,
 		})
 	if result.Error != nil {
 		return result.Error
