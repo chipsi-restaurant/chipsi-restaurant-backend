@@ -62,6 +62,18 @@ func Migrate(db *gorm.DB) error {
 		return err
 	}
 
+	if err := db.AutoMigrate(&domain.Order{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&domain.OrderItem{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&domain.Delivery{}); err != nil {
+		return err
+	}
+
 	if err := createAdmin(db); err != nil {
 		return err
 	}
