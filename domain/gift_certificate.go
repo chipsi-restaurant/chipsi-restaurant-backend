@@ -33,9 +33,12 @@ type GiftCertificateRepository interface {
 	Create(ctx context.Context, giftCertificate *GiftCertificate) (*GiftCertificate, error)
 	GetBySenderID(ctx context.Context, id int64) ([]*GiftCertificate, error)
 	GetByReceiverID(ctx context.Context, id int64) ([]*GiftCertificate, error)
+	GetByCode(ctx context.Context, code string) (*GiftCertificate, error)
+	UseCertificate(ctx context.Context, code string) error
 }
 
 type GiftCertificateUsecase interface {
 	Create(ctx context.Context, request *GiftCertificateRequest) (*GiftCertificateResponse, error)
 	GetBySenderID(ctx context.Context, id int64) ([]*GiftCertificateResponse, error)
+	GetByCode(ctx context.Context, code string, userID int64) (*GiftCertificateResponse, error)
 }
