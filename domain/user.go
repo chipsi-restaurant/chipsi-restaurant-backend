@@ -30,6 +30,7 @@ type UserDTO struct {
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
 	CreatedAt time.Time `json:"createdAt"`
+	Bonuses   int       `json:"bonuses"`
 }
 
 func ToUserDTO(user *User) *UserDTO {
@@ -40,6 +41,7 @@ func ToUserDTO(user *User) *UserDTO {
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		CreatedAt: user.CreatedAt,
+		Bonuses:   user.Bonuses.Amount,
 	}
 }
 
