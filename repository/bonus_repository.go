@@ -21,3 +21,9 @@ func (r *bonusRepository) Create(ctx context.Context, bonus *domain.Bonus) (*dom
 	}
 	return bonus, nil
 }
+
+func (r *bonusRepository) ChangeAmount(ctx context.Context, userID uint, used int, earned int) error {
+	return r.db.WithContext(ctx).Model(&domain.Bonus{}).
+		Where("user_id = ?", userID).
+		UpdateColumn("amount", gorm.Expr("amount - ? + ?", used, earned)).Error
+}

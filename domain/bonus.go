@@ -14,6 +14,7 @@ type Bonus struct {
 
 type BonusRepository interface {
 	Create(ctx context.Context, bonus *Bonus) (*Bonus, error)
+	ChangeAmount(ctx context.Context, userID uint, used int, earned int) error
 }
 
 type BonusUsecase interface {
