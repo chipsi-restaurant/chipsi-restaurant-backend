@@ -86,3 +86,27 @@ func (g giftCertificateUsecase) GetBySenderID(ctx context.Context, id int64) ([]
 	}
 	return response, nil
 }
+
+func (g giftCertificateUsecase) GetByCode(ctx context.Context, code string, userID int64) (*domain.GiftCertificateResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, g.contextTimeout)
+	defer cancel()
+	certificate, err := g.giftCertificateRepository.GetByCode(ctx, code)
+	if err != nil {
+		return nil, err
+	}
+
+	if int64(certificate.ReceiverID) != userID {
+		return nil, httpErrors.NotFound
+	}
+
+	if certificate.Status == domain.CertificateUsed {
+		return nil, httpErrors.BadRequest
+	}
+
+	response := &domain.GiftCertificateResponse{
+		Amount:        certificate.Amount,
+		ReceiverEmail: certificate.Receiver.Email,
+		CreatedAt:     certificate.CreatedAt,
+	}
+	return response, nil
+}

@@ -2,7 +2,10 @@ package repository
 
 import (
 	"chipsiBackend/domain"
+	"chipsiBackend/pkg/httpErrors"
 	"context"
+	"errors"
+	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -38,4 +41,37 @@ func (r *giftCertificateRepository) GetByReceiverID(ctx context.Context, id int6
 		Where("receiver_id = ?", id).
 		Find(&certificates).Error
 	return certificates, err
+}
+
+func (r *giftCertificateRepository) GetByCode(ctx context.Context, code string) (*domain.GiftCertificate, error) {
+	var giftCertificate domain.GiftCertificate
+	result := r.db.WithContext(ctx).
+		Preload("Receiver").
+		Where("code = ?", code).
+		First(&giftCertificate)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, httpErrors.NotFound
+		} else {
+			return nil, fmt.Errorf("db error: %v", result.Error)
+		}
+	}
+	return &giftCertificate, nil
+}
+
+func (r *giftCertificateRepository) UseCertificate(ctx context.Context, code string) error {
+	result := r.db.WithContext(ctx).
+		Model(&domain.GiftCertificate{}).
+		Where("code = ? AND status = ?", code, domain.CertificateActive).
+		Updates(map[string]interface{}{
+			"status": domain.CertificateUsed,
+			"amount": 0,
+		})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return httpErrors.NotFound
+	}
+	return nil
 }
