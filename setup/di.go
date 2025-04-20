@@ -18,6 +18,7 @@ type UseCases struct {
 	S3              usecase.S3Usecase
 	Signup          domain.SignupUsecase
 	User            domain.UserUsecase
+	Order           domain.OrderUsecase
 }
 
 type Repositories struct {
@@ -26,6 +27,7 @@ type Repositories struct {
 	GiftCertificate domain.GiftCertificateRepository
 	MenuItem        domain.MenuItemRepository
 	User            domain.UserRepository
+	Order           domain.OrderRepository
 }
 
 type Graph struct {
@@ -42,6 +44,7 @@ func BuildGraph(app bootstrap.Application) Graph {
 	giftCertificateRepository := repository.NewGiftCertificateRepository(app.Db)
 	menuItemRepository := repository.NewMenuItemRepository(app.Db)
 	userRepository := repository.NewUserRepository(app.Db)
+	orderRepository := repository.NewOrderRepository(app.Db)
 
 	bonusUsecase := usecase.NewBonusUsecase(bonusRepository, timeout)
 	categoryUsecase := usecase.NewCategoryUsecase(categoryRepository, timeout)
@@ -52,6 +55,7 @@ func BuildGraph(app bootstrap.Application) Graph {
 	refreshTokenUsecase := usecase.NewRefreshTokenUsecase(userRepository, app.Cfg, timeout)
 	s3Usecase := usecase.NewS3Usecase(app.S3, app.Cfg)
 	menuItemUsecase := usecase.NewMenuItemUsecase(s3Usecase, categoryUsecase, menuItemRepository, timeout)
+	orderUsecase := usecase.NewOrderUsecase(orderRepository, menuItemRepository, userRepository, giftCertificateRepository, bonusRepository)
 
 	return Graph{
 		UCs: UseCases{
@@ -64,6 +68,7 @@ func BuildGraph(app bootstrap.Application) Graph {
 			S3:              s3Usecase,
 			Signup:          signupUsecase,
 			User:            userUsecase,
+			Order:           orderUsecase,
 		},
 		Repos: Repositories{
 			Bonus:           bonusRepository,
@@ -71,6 +76,7 @@ func BuildGraph(app bootstrap.Application) Graph {
 			GiftCertificate: giftCertificateRepository,
 			MenuItem:        menuItemRepository,
 			User:            userRepository,
+			Order:           orderRepository,
 		},
 	}
 
