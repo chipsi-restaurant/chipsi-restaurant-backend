@@ -1,15 +1,15 @@
 app:
-  jwt_secret_key: test-secret
+  jwt_secret_key: ${JWT_SECRET_KEY}
   access_token_expiry: 2h
   refresh_token_expiry: 168h
 
 server:
-  host: localhost
+  host: 0.0.0.0
   port: 8080
 
 database:
   user: postgres
-  password: 123
+  password: ${DATABASE_PASSWORD}
   host: chipsi-postgres
   port: 5432
   dbname: chipsi
@@ -19,12 +19,12 @@ s3:
   endpoint: s3.cloud.ru
   bucket: chipsi-restaurant
   region: ru-central-1
-  access_key: token
-  secret_key: token
+  access_key: ${S3_ACCESS_KEY}
+  secret_key: ${S3_SECRET_KEY}
 
-  smtp:
-    from: roflandown@yandex.ru
-    host: smtp.yandex.ru
-    port: 465
-    username: roflandown@yandex.ru
-    password: password
+smtp:
+  from: roflandown@yandex.ru
+  host: smtp.yandex.ru
+  port: 465
+  username: roflandown@yandex.ru
+  password: ${SMTP_PASSWORD}
