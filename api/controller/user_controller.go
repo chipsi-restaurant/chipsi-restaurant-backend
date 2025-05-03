@@ -6,6 +6,7 @@ import (
 	"chipsiBackend/pkg/httpErrors"
 	"encoding/json"
 	"errors"
+	"github.com/go-chi/chi/v5"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -98,6 +99,41 @@ func (uc *UserController) PatchMe(w http.ResponseWriter, r *http.Request) {
 		httpErrors.JSONError(w, err.Error(), http.StatusInternalServerError)
 		return
 
+	}
+
+	userDTO := domain.ToUserDTO(user)
+	if err := json.NewEncoder(w).Encode(userDTO); err != nil {
+		uc.Log.Error("can't encode json")
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
+func (uc *UserController) GetUserByID(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	if idStr == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		if err := json.NewEncoder(w).Encode(httpErrors.NewBadRequestError("missing id parameter")); err != nil {
+			uc.Log.Error("can't encode json")
+		}
+		return
+	}
+
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		if err := json.NewEncoder(w).Encode(httpErrors.NewBadRequestError("invalid id format")); err != nil {
+			uc.Log.Error("can't encode json")
+		}
+		return
+	}
+
+	user, err := uc.UserUsecase.GetByID(r.Context(), id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		if encodeError := json.NewEncoder(w).Encode(httpErrors.NewNotFoundError(err)); encodeError != nil {
+			uc.Log.Error("can't encode json")
+		}
+		return
 	}
 
 	userDTO := domain.ToUserDTO(user)

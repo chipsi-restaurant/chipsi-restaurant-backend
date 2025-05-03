@@ -19,6 +19,9 @@ type UseCases struct {
 	Signup          domain.SignupUsecase
 	User            domain.UserUsecase
 	Order           domain.OrderUsecase
+	Reservation     domain.ReservationUsecase
+	Event           domain.EventUsecase
+	PasswordReset   domain.PasswordResetTokenUsecase
 }
 
 type Repositories struct {
@@ -28,6 +31,9 @@ type Repositories struct {
 	MenuItem        domain.MenuItemRepository
 	User            domain.UserRepository
 	Order           domain.OrderRepository
+	Reservation     domain.ReservationRepository
+	Event           domain.EventRepository
+	PasswordReset   domain.PasswordResetTokenRepository
 }
 
 type Graph struct {
@@ -45,6 +51,9 @@ func BuildGraph(app bootstrap.Application) Graph {
 	menuItemRepository := repository.NewMenuItemRepository(app.Db)
 	userRepository := repository.NewUserRepository(app.Db)
 	orderRepository := repository.NewOrderRepository(app.Db)
+	reservationRepository := repository.NewReservationRepository(app.Db)
+	eventRepository := repository.NewEventRepository(app.Db)
+	passwordResetRepository := repository.NewPasswordResetTokenRepository(app.Db)
 
 	bonusUsecase := usecase.NewBonusUsecase(bonusRepository, timeout)
 	categoryUsecase := usecase.NewCategoryUsecase(categoryRepository, timeout)
@@ -56,6 +65,9 @@ func BuildGraph(app bootstrap.Application) Graph {
 	s3Usecase := usecase.NewS3Usecase(app.S3, app.Cfg)
 	menuItemUsecase := usecase.NewMenuItemUsecase(s3Usecase, categoryUsecase, menuItemRepository, timeout)
 	orderUsecase := usecase.NewOrderUsecase(orderRepository, menuItemRepository, userRepository, giftCertificateRepository, bonusRepository)
+	reservationUsecase := usecase.NewReservationUsecase(reservationRepository, userRepository, app.Mail, timeout, app.Log)
+	eventUsecase := usecase.NewEventUsecase(eventRepository, userRepository, app.Mail, timeout, app.Log)
+	passwordResetUsecase := usecase.NewPasswordUsecase(userRepository, passwordResetRepository, app.Mail, app.Log)
 
 	return Graph{
 		UCs: UseCases{
@@ -69,6 +81,9 @@ func BuildGraph(app bootstrap.Application) Graph {
 			Signup:          signupUsecase,
 			User:            userUsecase,
 			Order:           orderUsecase,
+			Reservation:     reservationUsecase,
+			Event:           eventUsecase,
+			PasswordReset:   passwordResetUsecase,
 		},
 		Repos: Repositories{
 			Bonus:           bonusRepository,
@@ -77,6 +92,9 @@ func BuildGraph(app bootstrap.Application) Graph {
 			MenuItem:        menuItemRepository,
 			User:            userRepository,
 			Order:           orderRepository,
+			Reservation:     reservationRepository,
+			Event:           eventRepository,
+			PasswordReset:   passwordResetRepository,
 		},
 	}
 

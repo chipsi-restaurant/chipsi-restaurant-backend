@@ -1,11 +1,17 @@
 package domain
 
+import "encoding/json"
+
 type OrderStatus string
 type DeliveryStatus string
 type ReservationStatus string
 type EventStatus string
 type CertificateStatus string
 type AdminRole string
+
+func (s ReservationStatus) MarshalJSON() ([]byte, error) {
+	return json.Marshal(string(s))
+}
 
 const (
 	OrderPending   OrderStatus = "pending"

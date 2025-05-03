@@ -28,6 +28,7 @@ func Setup(app bootstrap.Application) chi.Router {
 		r.Mount("/auth/signup", NewSignupRouter(graph.UCs.Signup, app.Log, app.Cfg))
 		r.Mount("/auth/login", NewLoginRouter(graph.UCs.Login, app.Log, app.Cfg))
 		r.Mount("/auth/refreshToken", NewRefreshTokenRouter(graph.UCs.RefreshToken, app.Log, app.Cfg))
+		r.Mount("/auth/password", NewPasswordRouter(graph.UCs.PasswordReset))
 
 		// Требуют токен
 		r.Group(func(r chi.Router) {
@@ -36,8 +37,11 @@ func Setup(app bootstrap.Application) chi.Router {
 			r.Mount("/categories", NewCategoryRouter(graph.UCs.Category, adminMiddleware))
 			r.Mount("/menuItems", NewMenuItemRouter(graph.UCs.MenuItem, adminMiddleware))
 			r.Mount("/giftCertificates", NewGiftCertificateRouter(graph.UCs.GiftCertificate))
-			r.Mount("/users", NewUserRouter(graph.UCs.User, app.Log))
+			r.Mount("/users", NewUserRouter(graph.UCs.User, app.Log, adminMiddleware))
 			r.Mount("/orders", NewOrderRouter(graph.UCs.Order))
+			r.Mount("/reservations", NewReservationRouter(graph.UCs.Reservation, adminMiddleware))
+			r.Mount("/events", NewEventRouter(graph.UCs.Event, adminMiddleware, app.Log))
+
 		})
 	}
 

@@ -74,6 +74,18 @@ func Migrate(db *gorm.DB) error {
 		return err
 	}
 
+	if err := db.AutoMigrate(&domain.Reservation{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&domain.Event{}); err != nil {
+		return err
+	}
+
+	if err := db.AutoMigrate(&domain.PasswordResetToken{}); err != nil {
+		return err
+	}
+
 	if err := createAdmin(db); err != nil {
 		return err
 	}
