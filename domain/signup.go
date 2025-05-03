@@ -6,7 +6,7 @@ import (
 )
 
 type SignupRequest struct {
-	FirstName string `json:"name"`
+	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Phone     string `json:"phone"`
 	Email     string `json:"email"`
